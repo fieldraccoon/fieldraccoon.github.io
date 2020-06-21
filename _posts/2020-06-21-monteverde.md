@@ -3,7 +3,7 @@ title: Monteverde
 author: fieldraccoon
 date: 2020-06-21 
 categories: [hack-the-box, windows]
-tags: [hack-the-box, smb, windows-exploits ]
+tags: [hack-the-box, smb, windows-exploits, medium]
 math: true
 ---
 # Monteverde
