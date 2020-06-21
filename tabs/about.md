@@ -8,4 +8,10 @@ title: About
 # MIT License
 ---
 
-> **Note**: Add Markdown syntax content to file `tabs/about.md` and it will show up on this page.
+# About me
+
+### I am a young student from the united Kingdom interested in Cyber Security.
+
+### I take part in ctfs with my team `The WinRaRs` -- CTF time link https://ctftime.org/team/113086
+
+My hack the box profile -- https://www.hackthebox.eu/home/users/profile/246314
