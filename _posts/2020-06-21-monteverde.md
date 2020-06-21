@@ -1,3 +1,11 @@
+---
+title: Monteverde
+author: fieldraccoon
+date: 2020-06-21 
+categories: [hack-the-box, windows]
+tags: [hack-the-box, smb, windows-exploits ]
+math: true
+---
 # Monteverde
 
 Monteverde was a medium windows box that involved many common windows exploitation techniques and didnt require much to get both the user and root flags
