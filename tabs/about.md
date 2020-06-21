@@ -12,6 +12,7 @@ title: About
 
 ### I am a young student from the united Kingdom interested in Cyber Security.
 
-### I take part in ctfs with my team `The WinRaRs` -- CTF time link https://ctftime.org/team/113086
+### I take part in ctfs with my team `The WinRaRs` -- [CTF time](https://ctftime.org/team/113086)
+
 
 My hack the box profile -- https://www.hackthebox.eu/home/users/profile/246314
