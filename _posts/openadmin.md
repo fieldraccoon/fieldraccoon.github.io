@@ -1,3 +1,11 @@
+---
+title: openAdmin
+author: fieldraccoon
+date: 2020-06-21 
+categories: [hack-the-box, linux]
+tags: [hack-the-box, exploitation]
+math: true
+---
 # OpenAdmin
 
 Openadmin was an easy linux box which required a bit of enumeration to find the vulnerable service OpenNetAdmin running on http and we then exploit it to get a shell. After that we priv esc to a user jimmy and after that te user joanna. Root was a simple GTFO bins search which used the text editor nano to get a root shell.
