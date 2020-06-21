@@ -8,21 +8,20 @@
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 #--------------------------
 
-title: Chirpy                          # the main title
+title: fieldraccoon Cyber Sec Blog                          # the main title
 
-tagline: A text-focused Jekyll theme.  # it will display as the sub-title
+tagline: Hack the box writeups and more.  # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
-  A minimal, portfolio, sidebar,
-  bootstrap Jekyll theme with responsive web design
-  and focuses on text presentation.
+  This is my blog where i will post hack the box writeups and any other things such as,
+  CTF challenges that i might find interesting.
 
 # Replace with the website url, e.g. 'https://username.github.io'
 url: 'protocol://domain'
 
 author: fieldraccoon                  # change to your full name
 
-avatar: /assets/img/sample/avatar.jpg   # support internet resources
+avatar:    # support internet resources
 
 github:
   username: fieldraccoon             # change to your github username
