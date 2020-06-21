@@ -3,7 +3,7 @@ title: openAdmin
 author: fieldraccoon
 date: 2020-06-21 
 categories: [hack-the-box, linux]
-tags: [hack-the-box, exploitation]
+tags: [hack-the-box, exploitation, easy]
 math: true
 ---
 # OpenAdmin
