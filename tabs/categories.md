@@ -8,23 +8,6 @@ title: Categories
 # MIT License
 ---
 
----
-layout: category
-title: hack-the-box        
-category: hack-the-box     
----
-
----
-layout: category
-title: windows        
-category: windows     
----
-
----
-layout: category
-title: linux        
-category: linux     
----
 
 {% assign HEAD_PREFIX = "h_" %}
 {% assign LIST_PREFIX = "l_" %}
