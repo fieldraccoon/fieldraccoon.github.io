@@ -10,3 +10,20 @@ breadcrumb:
 # © 2017-2019 Cotes Chung
 # MIT License
 ---
+
+<p>hello</p>
+<p id="text-scroller></p>
+       
+<script>
+  var i = 0;
+var txt = 'fieldraccoon@hack-the-box'; /* The text */
+var speed = 50; /* The speed/duration of the effect in milliseconds */
+
+function typeWriter() {
+  if (i < txt.length) {
+    document.getElementById("text-scroller").innerHTML += txt.charAt(i);
+    i++;
+    setTimeout(typeWriter, speed);
+  }
+}
+</script>
