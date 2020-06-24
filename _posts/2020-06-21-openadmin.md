@@ -1,5 +1,5 @@
 ---
-title: openAdmin
+title: OpenAdmin
 author: fieldraccoon
 date: 2020-06-21 
 categories: [hack-the-box, linux]
