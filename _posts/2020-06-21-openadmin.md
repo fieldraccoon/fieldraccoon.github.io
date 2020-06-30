@@ -14,7 +14,7 @@ Openadmin was an easy linux box which required a bit of enumeration to find the 
 - enumeration
 - exploitation
 - further enumeration of files lon target system
-- privelage escalation x 3
+- privilege escalation x 3
 
 # USER
 
