@@ -14,7 +14,7 @@ Monteverde was a medium windows box that involved many common windows exploitati
 - enumeration
 - smbclient
 - CrackMapExec & enum4linux
-- windows privelage escalation
+- windows privilage escalation
 
 # USER
 
