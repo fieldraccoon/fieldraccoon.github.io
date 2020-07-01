@@ -8,10 +8,10 @@ math: true
 ---
 
 
-# SUID binaries found with `sudo -l` for privilege escalation:
+## SUID binaries found with `sudo -l` for privilege escalation:
 
 
-## tryhackme linux priv esc arena:
+### tryhackme linux priv esc arena:
 
 
 Running `sudo -l` returns a few options of things we can run so we will find a way to exploit each one:
@@ -124,7 +124,7 @@ bash-4.1# whoami
 root
 ```
 
-## tryhackme pentest box, the most simlpe priv esc with `sudo -l` to show us we can run anything as root so we can simply su.
+### tryhackme pentest box, the most simlpe priv esc with `sudo -l` to show us we can run anything as root so we can simply su.
 
 ```bash
 kay@basic2:~$ sudo -l
@@ -139,7 +139,7 @@ root@basic2:/home/kay# whoami
 root
 ```
 
-## openadmin htb - using nano to get a shell:
+### openadmin htb - using nano to get a shell:
 
  ROOT
 
@@ -180,7 +180,7 @@ root.txt: not found
 ```
 
 
-## tryhackme lazy-admin box - sudo -l - perl priv-esc
+### tryhackme lazy-admin box - sudo -l - perl priv-esc
 
 ```bash
 www-data@THM-Chal:/home/itguy$ sudo -l
@@ -223,9 +223,9 @@ uid=0(root) gid=0(root) groups=0(root)
 # cat root.txt
 THM{6637f41d0177b6f37cb20d775124699f}
 ```
-# Other
+## Other
 
-## Priv esc with mounting file system on docker:
+### Priv esc with mounting file system on docker:
 
 Running `id` confirms that the user is part of a docker group, we will see if we can exploit this.
 ```bash
@@ -258,7 +258,7 @@ bash-4.4# cat root.txt
 bash-4.4#
 ```
 
-## priv esc with ssh-key cracking - tryhackme box
+### priv esc with ssh-key cracking - tryhackme box
 
 in this model priv esc we gain access to a user who can read other users ssh private keys but they are encrypted with a password. We crack the key with ssh2john and ssh into that user with the password it cracks.
 
@@ -400,7 +400,7 @@ Date:   Mon Mar 19 09:33:06 2018 -0400
 ```
 This means that the user had an old ssh key reverted(its the root ssh key) so we need to try and find a way to get this. We run `git show 33e87c312c08735a02fa9c796021a4a3023129ad `and it shows us the root key, We copy it to our box once again, give it appropriate permissions and ssh as root.
 
-## simple ret2libc exploit to get a root shell
+### simple ret2libc exploit to get a root shell
 
 We find an SUID binary in /home/ayush/.binary, its called rop
 we run it to see what it does, basically it just takes our input and outputs it. 
@@ -461,7 +461,7 @@ Then we simply run This command to exploit the binary and get a root shell and r
 ./rop `python /tmp/exploit.py`
 ```
 
-## root shell via php file execution as root - htb cronos:
+### root shell via php file execution as root - htb cronos:
 
 By running linenum.sh on the system we find an interesting file on it called `/etc/crontab`.
 
@@ -532,7 +532,7 @@ root
 1703b8a3c9a8dde879942c79d02fd3a0
 ```
 
-## Using dirtycow
+### Using dirtycow
 
 we can test to see if the kernel for that machine is vulnrable by running an exploit suggestor and if it comes up with dirty cow we can abuse it like this:
 ```bash
