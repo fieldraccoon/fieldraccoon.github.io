@@ -461,7 +461,7 @@ kay@basic2:~$
 ```
 And here we managed to get into the system as the user.
 
-## Git show on git logs to reveal a private ssh key - devOops box htb
+### Git show on git logs to reveal a private ssh key - devOops box htb
 
 as we ssh we find that there is a git directory in `/home/roosa/work/blogfeed/.git` we run `git log` to see if we find anything interesting and luckily we do.
 ```bash
