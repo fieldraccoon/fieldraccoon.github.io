@@ -7,8 +7,9 @@ tags: [hack-the-box, tryhackme,]
 math: true
 ---
 
+# Linux privilage escalation techniques
 
-# SUID binaries for privilege escalation:
+## SUID binaries for privilege escalation:
 
 
 ## tryhackme linux priv esc arena:
@@ -295,7 +296,7 @@ uid=0(root) gid=0(root) groups=0(root)
 THM{6637f41d0177b6f37cb20d775124699f}
 ```
 
-# Other:
+## Other:
 
 ## Priv esc with mounting file system on docker:
 
