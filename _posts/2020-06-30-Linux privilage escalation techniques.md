@@ -295,7 +295,7 @@ uid=0(root) gid=0(root) groups=0(root)
 THM{6637f41d0177b6f37cb20d775124699f}
 ```
 
-# Other
+# Other:
 
 ## Priv esc with mounting file system on docker:
 
