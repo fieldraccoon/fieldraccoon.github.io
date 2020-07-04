@@ -295,7 +295,7 @@ After the script has executed we type `!/bin/bash` which will give us a shell.
 Overall this wasnt the greatest way to do this as without gtfobins it required pure guesswork as the shell wouldnt work if the window wasnt minmised.
 
 
-## Other
+# Other
 
 ## Priv esc with mounting file system on docker:
 
