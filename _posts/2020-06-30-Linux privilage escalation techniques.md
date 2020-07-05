@@ -15,7 +15,7 @@ math: true
 
 In this category some will be in more depth and some will be in less detail depending on how much there is to explain.
 
-* note that there will be more added every now and then, all 80 methods wont be available from release.
+note that there will be more added every now and then, all 80 methods wont be available from release.
 As always we will `sudo -l` to see what we can run as sudo. In this case there is 80 different ways of priv esc to root.
 
 ```bash
