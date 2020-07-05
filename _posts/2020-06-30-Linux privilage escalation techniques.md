@@ -162,7 +162,9 @@ d41d8cd[redacted]
 ```
 
 
-### tryhackme pentest box, the most simlpe priv esc with `sudo -l` to show us we can run anything as root so we can simply su.
+### tryhackme pentest box:
+
+The most simlpe priv esc with `sudo -l` to show us we can run anything as root so we can simply su.
 
 ```bash
 kay@basic2:~$ sudo -l
