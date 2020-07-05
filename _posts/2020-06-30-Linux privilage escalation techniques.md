@@ -17,7 +17,9 @@ In this category some will be in more depth and some will be in less detail depe
 
 * note that there will be more added every now and then, all 80 methods wont be available from release.
 As always we will `sudo -l` to see what we can run as sudo. In this case there is 80 different ways of priv esc to root.
+
 ```bash
+
 -bash-4.2$ sudo -l
 Matching 'Defaults' entries for user on this host:
     env_reset, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
@@ -36,7 +38,7 @@ User user may run the following commands on this host:
     /usr/bin/tail, (root) /bin/tar, (root) /usr/bin/taskset, (root) /usr/bin/tclsh, (root) /usr/sbin/tcpdump, (root) /usr/bin/tee, (root) /usr/bin/telnet, (root) /usr/bin/tftp, (root) /usr/bin/time, (root) /usr/bin/timeout, (root)     
     /usr/bin/tmux, (root) /usr/bin/ul, (root) /usr/bin/unexpand, (root) /usr/bin/uniq, (root) /usr/bin/unshare, (root) /usr/bin/vi, (root) /usr/bin/vim, (root) /usr/bin/watch, (root) /usr/bin/wget, (root) /usr/bin/xargs, (root)        
     /usr/bin/xxd, (root) /usr/bin/zip, (root) /usr/bin/zsh
-```
+		```
 
 #### base64
 
