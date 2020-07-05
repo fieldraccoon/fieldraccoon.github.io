@@ -358,7 +358,7 @@ sudo /bin/mount /dev/mapper/backup ./mnt/
 ```
 And then we can simply go the the mounted folder and find the root shh key inside, we then ssh as root and read the flag!
 
-## priv esc with ssh-key cracking - tryhackme box
+### priv esc with ssh-key cracking - tryhackme box
 
 in this model priv esc we gain access to a user who can read other users ssh private keys but they are encrypted with a password. We crack the key with ssh2john and ssh into that user with the password it cracks.
 
