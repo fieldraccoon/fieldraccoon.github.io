@@ -41,7 +41,8 @@ User user may run the following commands on this host:
 
 #### base64
 
-```bash-4.2$ sudo base64 /root/flag.txt
+```bash
+bash-4.2$ sudo base64 /root/flag.txt
 Q29uZ3JhdHVsYXRpb25zISBZb3UgZ290IHRoZSBlYXNpZXN0IGZsYWcgb24gVEhNIQoKVEhNezNh
 c3lfZjE0Z18xbTQwfQoKTm93IGdvIHByaXYgZXNjIHNvbWUgbW9yZSEK
 ```
