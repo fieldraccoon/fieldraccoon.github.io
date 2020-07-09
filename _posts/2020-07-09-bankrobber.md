@@ -3,7 +3,7 @@ title: bankrobber user
 author: fieldraccoon
 date: 2020-07-09
 categories: [hack-the-box, windows]
-tags: [hack-the-box, sqli, xxs, xsrf, javascript]
+tags: [hack-the-box, sqli, xxs, xsrf, javascript, insane]
 math: true
 ---
 
