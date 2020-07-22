@@ -1,5 +1,5 @@
 ---
-title: Sauna
+title: Saunatest
 author: fieldraccoon
 date: 2020-07-15
 categories: [hack-the-box, windows]
