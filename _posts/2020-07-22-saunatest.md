@@ -2,6 +2,7 @@
 title: Saunatest
 layout: password_template
 author: fieldraccoon
+instructions: unlock
 date: 2020-07-15
 categories: [hack-the-box, windows]
 tags: [hack-the-box, windows-exploits, easy]
