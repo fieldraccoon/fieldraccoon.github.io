@@ -186,3 +186,5 @@ I then exported the vm and uploaded it to tryhackme, I set it as a private room 
 If for some reason you want to play the machine the link is here [tryhackme machine](tryhackme.com/jr/oopsie)
 
 Thanks for reading hope you enjoyed :)
+
+Thanks to John Hammond and Jambot3000 and their posts on how to make machines and making the concept clearer
