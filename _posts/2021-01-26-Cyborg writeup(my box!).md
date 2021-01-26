@@ -45,7 +45,7 @@ Nmap done: 1 IP address (1 host up) scanned in 8.73 seconds
 
 We can see that port 22 is open on ssh, 80 is also open for HTTP so lets check them out.
 
-![https://i.ibb.co/1KdwnBq/apache.png)
+![apache](https://i.ibb.co/1KdwnBq/apache.png)
 We can see that it is just the default Apache "It Works" page. lets dig deeper and start up a gobuster.
 
 ## Gobuster
@@ -73,11 +73,11 @@ We can see that it has revealed `admin` lets check that out.
 
 ## /Admin
 
-![https://i.ibb.co/R22wf9t/admin.png)
+![admin](https://i.ibb.co/R22wf9t/admin.png)
 We see that is a landing page for a music producer.
 We check around and find a toggled download in archive. This lets us download an `archive.tar` file. We will save this for later.
 
-![https://i.ibb.co/Hn3JbCF/shoutbox.png)
+![shoutbox](https://i.ibb.co/Hn3JbCF/shoutbox.png)
 going over to the admins section we can see there is a shout box where people can message each other. They talk about a music archive but the most important part is the section on the squid proxy.
 
 Squid is essentially just a proxy for http but we don't need to look into this too much. They claim there is some config files laying about. So lets get googling and find out where these are located.
